@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "657106672706",
+    "project_id": "sellmyproduct-3a3a3",
+    "storage_bucket": "sellmyproduct-3a3a3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657106672706:android:f32bf75b37424cdbc161db",
+        "android_client_info": {
+          "package_name": "com.sellmyproduct"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFJ74hnK79ylKM40XHUVmIb43PKERoS0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
