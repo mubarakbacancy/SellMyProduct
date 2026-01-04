@@ -41,5 +41,14 @@ class AuthRepository @Inject constructor(
     fun getCurrentUserId(): String? {
         return firebaseAuth.currentUser?.uid
     }
+
+    suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
+        return try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
 

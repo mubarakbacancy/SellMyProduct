@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sellmyproduct.navigation.NavRoutes
+import com.sellmyproduct.ui.forgotpassword.ForgotPasswordScreen
 import com.sellmyproduct.ui.home.HomeScreen
 import com.sellmyproduct.ui.login.LoginScreen
 import com.sellmyproduct.ui.register.RegisterScreen
@@ -55,6 +56,17 @@ class MainActivity : ComponentActivity() {
                             },
                             onNavigateToRegister = {
                                 navController.navigate(NavRoutes.REGISTER)
+                            },
+                            onNavigateToForgotPassword = {
+                                navController.navigate(NavRoutes.FORGOT_PASSWORD)
+                            }
+                        )
+                    }
+                    
+                    composable(NavRoutes.FORGOT_PASSWORD) {
+                        ForgotPasswordScreen(
+                            onBackToLogin = {
+                                navController.popBackStack()
                             }
                         )
                     }

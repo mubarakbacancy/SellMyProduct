@@ -1,8 +1,6 @@
 package com.sellmyproduct.ui.register
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,9 +8,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -46,25 +46,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.layout.ContentScale
-import com.sellmyproduct.R
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sellmyproduct.R
+import com.sellmyproduct.ui.components.AnimatedAppLabel
 import com.sellmyproduct.ui.components.WavyBackground
 import com.sellmyproduct.ui.theme.Background
+import com.sellmyproduct.ui.theme.SellMyProductTheme
 import com.sellmyproduct.viewmodel.RegisterViewModel
 
 @Composable
@@ -131,52 +131,65 @@ fun RegisterContent(
     val confirmPasswordFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val scrollState = rememberScrollState()
+    val density = LocalDensity.current
+    val imeInsets = WindowInsets.ime
+    val keyboardHeight = with(density) { imeInsets.getBottom(this).toDp() }
+    val isKeyboardOpen = keyboardHeight > 0.dp
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
-            .imePadding()
     ) {
         // Wavy background pattern
         WavyBackground(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Logo and Animated Text - Centered above form
         Column(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .fillMaxSize()
+                .imePadding()
         ) {
-            // E-commerce Logo
-            Image(
-                painter = painterResource(id = R.drawable.ic_ecommerce_logo),
-                contentDescription = "E-commerce Logo",
-                modifier = Modifier.size(100.dp),
-                contentScale = ContentScale.Fit
-            )
-            
-            // Animated SellMyProduct label
-            AnimatedAppLabel()
-        }
+            // Top section - 30% of screen for Logo and Title
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.3f),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // E-commerce Logo - Always visible
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_ecommerce_logo),
+                        contentDescription = "E-commerce Logo",
+                        modifier = Modifier.size(100.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                    
+                    // Animated SellMyProduct label - Always show
+                    AnimatedAppLabel()
+                }
+            }
 
-        // White content area
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .verticalScroll(scrollState),
-            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-            color = MaterialTheme.colorScheme.surface,
-            shadowElevation = 8.dp
-        ) {
+            // Bottom section - 70% of screen for White Box
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.7f)
+                    .verticalScroll(scrollState),
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                color = MaterialTheme.colorScheme.surface,
+                shadowElevation = 8.dp
+            ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(24.dp),
+                    .padding(24.dp)
+                    .padding(top = 8.dp),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
@@ -345,8 +358,6 @@ fun RegisterContent(
                     shape = RoundedCornerShape(12.dp)
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
-
                 // Register Button
                 Button(
                     onClick = onRegisterClick,
@@ -375,8 +386,6 @@ fun RegisterContent(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
                 // Sign In Link
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -397,58 +406,98 @@ fun RegisterContent(
                     )
                 }
             }
+            }
         }
     }
 }
 
+@Preview(
+    name = "Register Screen",
+    showBackground = true,
+    showSystemUi = true
+)
 @Composable
-fun AnimatedAppLabel(
-    modifier: Modifier = Modifier
-) {
-    val text = "SellMyProduct"
-    var visibleCharCount by remember { mutableStateOf(0) }
-    
-    LaunchedEffect(key1 = true) {
-        kotlinx.coroutines.delay(300)
-        // Animate each character appearing one by one from right to left
-        // Start from the last character (rightmost) and work backwards
-        for (i in 1..text.length) {
-            visibleCharCount = i
-            kotlinx.coroutines.delay(150) // Delay between each character
-        }
+fun RegisterScreenPreview() {
+    SellMyProductTheme {
+        RegisterContent(
+            name = "John Doe",
+            email = "john@email.com",
+            password = "password123",
+            confirmPassword = "password123",
+            nameError = null,
+            emailError = null,
+            passwordError = null,
+            confirmPasswordError = null,
+            isLoading = false,
+            errorMessage = null,
+            isFormValid = true,
+            onNameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onConfirmPasswordChange = {},
+            onRegisterClick = {},
+            onNavigateToLogin = {}
+        )
     }
+}
 
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        text.forEachIndexed { index, char ->
-            // Show characters from right to left: last character first
-            val isVisible = index >= (text.length - visibleCharCount)
-            val charAlpha = animateFloatAsState(
-                targetValue = if (isVisible) 1f else 0f,
-                animationSpec = tween(durationMillis = 300),
-                label = "charAlpha_$index"
-            )
-            
-            val charScale = animateFloatAsState(
-                targetValue = if (isVisible) 1f else 0.3f,
-                animationSpec = tween(durationMillis = 300),
-                label = "charScale_$index"
-            )
+@Preview(
+    name = "Register Screen - With Errors",
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun RegisterScreenWithErrorsPreview() {
+    SellMyProductTheme {
+        RegisterContent(
+            name = "Jo",
+            email = "invalid-email",
+            password = "123",
+            confirmPassword = "456",
+            nameError = "Username must be at least 3 characters",
+            emailError = "Please enter a valid email",
+            passwordError = "Password must be at least 6 characters",
+            confirmPasswordError = "Passwords do not match",
+            isLoading = false,
+            errorMessage = null,
+            isFormValid = false,
+            onNameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onConfirmPasswordChange = {},
+            onRegisterClick = {},
+            onNavigateToLogin = {}
+        )
+    }
+}
 
-            Text(
-                text = char.toString(),
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                color = Color.White,
-                modifier = Modifier
-                    .alpha(charAlpha.value)
-                    .scale(charScale.value)
-            )
-        }
+@Preview(
+    name = "Register Screen - Loading",
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun RegisterScreenLoadingPreview() {
+    SellMyProductTheme {
+        RegisterContent(
+            name = "John Doe",
+            email = "john@email.com",
+            password = "password123",
+            confirmPassword = "password123",
+            nameError = null,
+            emailError = null,
+            passwordError = null,
+            confirmPasswordError = null,
+            isLoading = true,
+            errorMessage = null,
+            isFormValid = true,
+            onNameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onConfirmPasswordChange = {},
+            onRegisterClick = {},
+            onNavigateToLogin = {}
+        )
     }
 }
 

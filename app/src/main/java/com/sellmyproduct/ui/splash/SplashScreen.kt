@@ -18,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sellmyproduct.ui.components.WavyBackground
 import com.sellmyproduct.ui.theme.Background
+import com.sellmyproduct.ui.theme.SellMyProductTheme
 import com.sellmyproduct.viewmodel.SplashViewModel
 import kotlinx.coroutines.delay
 
@@ -85,6 +87,36 @@ fun SplashContent(
             modifier = Modifier
                 .alpha(alpha)
                 .scale(scale)
+        )
+    }
+}
+
+@Preview(
+    name = "Splash Screen",
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun SplashScreenPreview() {
+    SellMyProductTheme {
+        SplashContent(
+            alpha = 1f,
+            scale = 1f
+        )
+    }
+}
+
+@Preview(
+    name = "Splash Screen - Animated",
+    showBackground = true,
+    showSystemUi = true
+)
+@Composable
+fun SplashScreenAnimatedPreview() {
+    SellMyProductTheme {
+        SplashContent(
+            alpha = 0.7f,
+            scale = 0.8f
         )
     }
 }
